@@ -35,4 +35,8 @@ class RoomLocalDataSource(private val shoppingListDao: ShoppingListDao) : LocalD
     override suspend fun insertItem(item: ItemModel): Long {
         return shoppingListDao.insertItem(item.toItemEntity())
     }
+
+    override suspend fun deleteItem(item: ItemModel) {
+        shoppingListDao.deleteItemById(item.id)
+    }
 } 

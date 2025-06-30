@@ -72,6 +72,18 @@ class ShoppingListItemsViewModel @Inject constructor(
         }
     }
 
+    fun deleteItem(item: ItemModel) {
+        viewModelScope.launch {
+            try {
+                shoppingItemRepository.deleteItem(item)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = e.message
+                )
+            }
+        }
+    }
+
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }

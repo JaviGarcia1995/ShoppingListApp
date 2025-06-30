@@ -26,4 +26,8 @@ class ShoppingItemRepositoryImpl(
     override suspend fun updateItem(item: ItemModel) {
         localDataSource.insertItem(item)
     }
+
+    override suspend fun deleteItem(item: ItemModel) {
+        localDataSource.deleteItem(item)
+    }
 } 

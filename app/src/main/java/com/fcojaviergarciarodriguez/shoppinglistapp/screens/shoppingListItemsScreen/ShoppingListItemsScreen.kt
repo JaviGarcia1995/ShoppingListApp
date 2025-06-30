@@ -1,14 +1,42 @@
 package com.fcojaviergarciarodriguez.shoppinglistapp.screens.shoppingListItemsScreen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,11 +115,14 @@ fun ShoppingListItemsScreen(
                             .fillMaxSize()
                             .padding(paddingValues)
                     ) {
-                        items(shoppingList.items, key = { it.id }) { item ->
-                            ItemRow(
+                        items(shoppingList.items, key = { item -> item.id }) { item ->
+                            SwipeToDeleteItemRow(
                                 item = item,
                                 onCheckedChange = {
                                     viewModel.toggleItemCompleted(item)
+                                },
+                                onDelete = {
+                                    viewModel.deleteItem(item)
                                 }
                             )
                         }
@@ -108,11 +139,63 @@ fun ShoppingListItemsScreen(
         textFieldLabel = "Item name",
         newElementName = newItemName.value,
         onNewElementNameChange = { newItemName.value = it },
-        addElement = { 
+        addElement = {
             viewModel.addItem(it)
             newItemName.value = ""
         }
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeToDeleteItemRow(
+    item: ItemModel,
+    onCheckedChange: () -> Unit,
+    onDelete: () -> Unit
+) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        // Delete when the user swipes to the left. Do nothing when the user swipes to the right.
+        confirmValueChange = {
+            if (it == SwipeToDismissBoxValue.EndToStart) {
+                onDelete()
+                true
+            } else {
+                false
+            }
+        },
+        positionalThreshold = { it * 0.25f }
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false,
+        backgroundContent = {
+            val direction = dismissState.dismissDirection
+
+            val color = when (dismissState.dismissDirection) {
+                SwipeToDismissBoxValue.EndToStart -> Color.Red.copy(alpha = 0.8f)
+                else -> Color.Transparent
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color)
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                if (direction == SwipeToDismissBoxValue.EndToStart) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = Color.White
+                    )
+                }
+            }
+        }
+    ) {
+        ItemRow(item = item, onCheckedChange = onCheckedChange)
+    }
 }
 
 @Composable
@@ -120,24 +203,32 @@ fun ItemRow(
     item: ItemModel,
     onCheckedChange: () -> Unit
 ) {
-    Row(
+    Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth(),
+        shape = RectangleShape
     ) {
-        Checkbox(
-            checked = item.isChecked,
-            onCheckedChange = { _ -> onCheckedChange() },
-            colors = CheckboxDefaults.colors(
-                checkedColor = PrimaryColor,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = item.isChecked,
+                onCheckedChange = { _ -> onCheckedChange() },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = PrimaryColor,
+                    uncheckedColor = PrimaryColor
+                )
             )
-        )
-        Text(
-            text = item.name,
-            fontSize = 18.sp,
-            textDecoration = if (item.isChecked) TextDecoration.LineThrough else TextDecoration.None,
-            modifier = Modifier.padding(start = 8.dp)
-        )
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = item.name,
+                fontSize = 18.sp,
+                textDecoration = if (item.isChecked) TextDecoration.LineThrough else TextDecoration.None,
+            )
+        }
     }
 }

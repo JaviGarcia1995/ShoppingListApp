@@ -24,4 +24,7 @@ interface ShoppingListDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertItem(item: ItemEntity): Long
+
+    @Query("DELETE FROM items WHERE id = :itemId")
+    suspend fun deleteItemById(itemId: Int)
 } 

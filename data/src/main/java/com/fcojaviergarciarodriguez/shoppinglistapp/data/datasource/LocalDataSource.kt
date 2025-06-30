@@ -10,4 +10,5 @@ interface LocalDataSource {
     fun getShoppingListById(listId: Int): Flow<ShoppingListModel?>
     fun getItemsForList(listId: Int): Flow<List<ItemModel>>
     suspend fun insertItem(item: ItemModel): Long
+    suspend fun deleteItem(item: ItemModel)
 } 
