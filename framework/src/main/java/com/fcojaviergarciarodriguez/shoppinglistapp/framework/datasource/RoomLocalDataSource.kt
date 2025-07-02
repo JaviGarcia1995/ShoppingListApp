@@ -39,4 +39,8 @@ class RoomLocalDataSource(private val shoppingListDao: ShoppingListDao) : LocalD
     override suspend fun deleteItem(item: ItemModel) {
         shoppingListDao.deleteItemById(item.id)
     }
+
+    override suspend fun deleteShoppingList(shoppingList: ShoppingListModel) {
+        shoppingListDao.deleteShoppingListById(shoppingList.id)
+    }
 } 

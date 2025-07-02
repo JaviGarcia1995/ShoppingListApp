@@ -47,6 +47,10 @@ class ShoppingListRepositoryImpl(
         )
     }
 
+    override suspend fun deleteShoppingList(shoppingList: ShoppingListModel) {
+        localDataSource.deleteShoppingList(shoppingList)
+    }
+
     private fun getItemsForList(listId: Int): Flow<List<ItemModel>> =
         localDataSource.getItemsForList(listId)
 }

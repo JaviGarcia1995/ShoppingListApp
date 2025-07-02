@@ -53,6 +53,18 @@ class ShoppingListsHomeViewModel @Inject constructor(
         }
     }
 
+    fun deleteShoppingList(shoppingList: ShoppingListModel) {
+        viewModelScope.launch {
+            try {
+                shoppingListRepository.deleteShoppingList(shoppingList)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = e.message
+                )
+            }
+        }
+    }
+
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }

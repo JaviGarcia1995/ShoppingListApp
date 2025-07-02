@@ -7,4 +7,5 @@ interface ShoppingListRepository {
     fun getShoppingLists(): Flow<List<ShoppingListModel>>
     fun getShoppingList(id: Int): Flow<ShoppingListModel?>
     suspend fun addShoppingList(name: String)
+    suspend fun deleteShoppingList(shoppingList: ShoppingListModel)
 } 

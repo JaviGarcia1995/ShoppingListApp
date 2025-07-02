@@ -22,10 +22,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.PrimaryColor
+import com.fcojaviergarciarodriguez.shoppinglistapp.R
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.SecondaryColor
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.TertiaryColor
 
@@ -101,7 +103,7 @@ fun CustomAddListBottomSheet(
                             containerColor = TertiaryColor
                         )
                     ) {
-                        Text(text = "Cancel", color = Color.Black)
+                        Text(text = stringResource(R.string.cancel), color = Color.Black)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
@@ -116,7 +118,7 @@ fun CustomAddListBottomSheet(
                             containerColor = PrimaryColor
                         )
                     ) {
-                        Text(text = "Create", color = Color.Black)
+                        Text(text = stringResource(R.string.create), color = Color.Black)
                     }
                 }
             }

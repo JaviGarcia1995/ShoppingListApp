@@ -38,9 +38,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ItemModel
+import com.fcojaviergarciarodriguez.shoppinglistapp.R
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomAddElementFloatingButton
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomAddListBottomSheet
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomTopBar
@@ -71,12 +73,12 @@ fun ShoppingListItemsScreen(
     Scaffold(
         topBar = {
             CustomTopBar(
-                text = shoppingList?.name ?: "Loading...",
+                text = shoppingList?.name ?: stringResource(R.string.loading),
                 navigationIcon = {
                     IconButton(onClick = onBackClicked) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back_button)
                         )
                     }
                 }
@@ -85,7 +87,7 @@ fun ShoppingListItemsScreen(
         floatingActionButton = {
             CustomAddElementFloatingButton(
                 showSheetState = showBottomSheet,
-                text = "New Item"
+                text = stringResource(R.string.new_item)
             )
         },
         snackbarHost = {
@@ -105,7 +107,7 @@ fun ShoppingListItemsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No items yet. Add some!",
+                            text = stringResource(R.string.no_items_yet),
                             modifier = Modifier.padding(16.dp)
                         )
                     }
@@ -135,8 +137,8 @@ fun ShoppingListItemsScreen(
     CustomAddListBottomSheet(
         sheetState = sheetState,
         showSheetState = showBottomSheet,
-        formTitle = "New Item",
-        textFieldLabel = "Item name",
+        formTitle = stringResource(R.string.new_item),
+        textFieldLabel = stringResource(R.string.item_name),
         newElementName = newItemName.value,
         onNewElementNameChange = { newItemName.value = it },
         addElement = {
@@ -187,7 +189,7 @@ fun SwipeToDeleteItemRow(
                 if (direction == SwipeToDismissBoxValue.EndToStart) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(R.string.delete_button),
                         tint = Color.White
                     )
                 }

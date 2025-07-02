@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">ShoppingListApp</string>
+    
+    <!-- General UI -->
+    <string name="loading">Loading…</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="create">Create</string>
+    <string name="add">Add</string>
+    
+    <!-- Shopping Lists Home Screen -->
+    <string name="shopping_lists_title">Shopping Lists</string>
+    <string name="new_list">New List</string>
+    <string name="no_shopping_lists_yet">No shopping lists yet.</string>
+    <string name="new_shopping_list">New Shopping List</string>
+    <string name="list_name">List name</string>
+    <string name="items_count">Items: %d</string>
+    
+    <!-- Shopping List Items Screen -->
+    <string name="new_item">New Item</string>
+    <string name="no_items_yet">No items yet. Add some!</string>
+    <string name="item_name">Item name</string>
+    
+    <!-- Delete Confirmation Dialog -->
+    <string name="delete_shopping_list_title">Delete Shopping List</string>
+    <string name="delete_shopping_list_message">Are you sure you want to delete \"%s\"? This action will also delete all items in this list and cannot be undone.</string>
+    
+    <!-- Content Descriptions -->
+    <string name="back_button">Back</string>
+    <string name="delete_button">Delete</string>
+    <string name="list_icon">List Icon</string>
+    <string name="add_button">Add</string>
 </resources>
