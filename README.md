@@ -18,6 +18,37 @@ This project serves as a **production-ready template** demonstrating:
 - **Clean Architecture** implementation with proper layer separation
 - **MVVM pattern** with ViewModels and Use Cases
 - **SOLID principles** applied throughout the codebase
-- **Modern Android development** practices and tools
-- **Modular architecture** with clear dependencies
-- **Comprehensive testing** structure (coming soon)
+- **Comprehensive testing** structure
+
+## ✨ Features
+
+### 📱 App Functionality
+- ✅ Create and manage multiple shopping lists
+- ✅ Add, edit, and delete items within lists
+- ✅ Mark items as completed with visual feedback
+- ✅ Swipe-to-delete functionality for lists and items
+- ✅ Confirmation dialogs for destructive actions
+- ✅ Responsive UI with Material Design 3
+- ✅ Multilingual support (English/Spanish)
+
+### 🏗️ Architecture Features
+- ✅ **Clean Architecture** with 4 distinct modules
+- ✅ **Use Cases** for business logic encapsulation
+- ✅ **Repository Pattern** for data abstraction
+- ✅ **Dependency Injection** with Hilt
+- ✅ **Type-safe Navigation** with Compose Navigation
+- ✅ **Reactive Programming** with Kotlin Flows
+- ✅ **Local Database** with Room persistence
+
+### 📂 Module Structure
+
+- **`app/`** - Presentation layer with Compose UI, ViewModels, and Navigation
+- **`domain/`** - Business logic with Use Cases, Models, and Repository interfaces
+- **`data/`** - Data layer with Repository implementations and Data Sources
+- **`framework/`** - Infrastructure layer with Room database, DAOs, and Entities
+
+## 📜 Docs
+- [Android Architecture Guidelines](https://developer.android.com/topic/architecture)
+- [Clean Architecture by Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Android Jetpack Compose](https://developer.android.com/jetpack/compose)
+- [Material Design 3](https://m3.material.io/)
