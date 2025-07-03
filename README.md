@@ -11,6 +11,12 @@ A modern Android shopping list application built with **Clean Architecture**, **
 ![Hilt](https://img.shields.io/badge/Hilt-2196F3?style=for-the-badge&logo=android&logoColor=white)
 
 </div>
+</br>
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/349d365b-4bab-4897-9a21-14f8b49c5d64" width="250"/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/7b3f19dc-1fa5-4531-9f42-d39e3bac90ba" width="250"/>
+</div>
 
 ## 🎯 Project Purpose
 
