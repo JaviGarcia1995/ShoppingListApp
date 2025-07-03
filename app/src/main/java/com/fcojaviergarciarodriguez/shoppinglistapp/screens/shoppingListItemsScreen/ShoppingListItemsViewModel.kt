@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ItemModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ShoppingListModel
-import com.fcojaviergarciarodriguez.shoppinglistapp.domain.repository.ShoppingItemRepository
-import com.fcojaviergarciarodriguez.shoppinglistapp.domain.repository.ShoppingListRepository
+import com.fcojaviergarciarodriguez.shoppinglistapp.domain.usecase.AddItemToListUseCase
+import com.fcojaviergarciarodriguez.shoppinglistapp.domain.usecase.DeleteItemUseCase
+import com.fcojaviergarciarodriguez.shoppinglistapp.domain.usecase.GetShoppingListByIdUseCase
+import com.fcojaviergarciarodriguez.shoppinglistapp.domain.usecase.ToggleItemCompletedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +18,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShoppingListItemsViewModel @Inject constructor(
-    private val shoppingListRepository: ShoppingListRepository,
-    private val shoppingItemRepository: ShoppingItemRepository,
+    private val getShoppingListByIdUseCase: GetShoppingListByIdUseCase,
+    private val addItemToListUseCase: AddItemToListUseCase,
+    private val toggleItemCompletedUseCase: ToggleItemCompletedUseCase,
+    private val deleteItemUseCase: DeleteItemUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -33,7 +37,7 @@ class ShoppingListItemsViewModel @Inject constructor(
     private fun loadShoppingListWithItems() {
         viewModelScope.launch {
             try {
-                shoppingListRepository.getShoppingList(shoppingListId).collect { shoppingList ->
+                getShoppingListByIdUseCase(shoppingListId).collect { shoppingList ->
                     _uiState.value = _uiState.value.copy(
                         shoppingList = shoppingList,
                         isLoading = false
@@ -51,7 +55,7 @@ class ShoppingListItemsViewModel @Inject constructor(
     fun addItem(name: String) {
         viewModelScope.launch {
             try {
-                shoppingItemRepository.addItem(shoppingListId, name)
+                addItemToListUseCase(shoppingListId, name)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = e.message
@@ -63,7 +67,7 @@ class ShoppingListItemsViewModel @Inject constructor(
     fun toggleItemCompleted(item: ItemModel) {
         viewModelScope.launch {
             try {
-                shoppingItemRepository.updateItem(item.copy(isChecked = !item.isChecked))
+                toggleItemCompletedUseCase(item)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = e.message
@@ -75,7 +79,7 @@ class ShoppingListItemsViewModel @Inject constructor(
     fun deleteItem(item: ItemModel) {
         viewModelScope.launch {
             try {
-                shoppingItemRepository.deleteItem(item)
+                deleteItemUseCase(item)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = e.message
