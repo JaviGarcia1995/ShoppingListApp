@@ -1,29 +1,28 @@
 package com.fcojaviergarciarodriguez.shoppinglistapp.data.di
 
-import com.fcojaviergarciarodriguez.shoppinglistapp.data.datasource.LocalDataSource
 import com.fcojaviergarciarodriguez.shoppinglistapp.data.repository.ShoppingItemRepositoryImpl
 import com.fcojaviergarciarodriguez.shoppinglistapp.data.repository.ShoppingListRepositoryImpl
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.repository.ShoppingItemRepository
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.repository.ShoppingListRepository
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+abstract class DataModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideShoppingListRepository(localDataSource: LocalDataSource): ShoppingListRepository {
-        return ShoppingListRepositoryImpl(localDataSource)
-    }
+    abstract fun bindShoppingListRepository(
+        shoppingListRepositoryImpl: ShoppingListRepositoryImpl
+    ): ShoppingListRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideShoppingItemRepository(localDataSource: LocalDataSource): ShoppingItemRepository {
-        return ShoppingItemRepositoryImpl(localDataSource)
-    }
+    abstract fun bindShoppingItemRepository(
+        shoppingItemRepositoryImpl: ShoppingItemRepositoryImpl
+    ): ShoppingItemRepository
 } 

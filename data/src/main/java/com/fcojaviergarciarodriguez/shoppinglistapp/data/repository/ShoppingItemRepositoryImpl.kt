@@ -4,8 +4,9 @@ import com.fcojaviergarciarodriguez.shoppinglistapp.data.datasource.LocalDataSou
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ItemModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.repository.ShoppingItemRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class ShoppingItemRepositoryImpl(
+class ShoppingItemRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource
 ) : ShoppingItemRepository {
 
