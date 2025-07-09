@@ -9,6 +9,7 @@ A modern Android shopping list application built with **Clean Architecture**, **
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)
 ![Room](https://img.shields.io/badge/Room-4285F4?style=for-the-badge&logo=android&logoColor=white)
 ![Hilt](https://img.shields.io/badge/Hilt-2196F3?style=for-the-badge&logo=android&logoColor=white)
+![Testing](https://img.shields.io/badge/Tests-Included-4EAA25?style=for-the-badge)
 
 </div>
 </br>
@@ -45,6 +46,7 @@ This project serves as a **production-ready template** demonstrating:
 - ✅ **Type-safe Navigation** with Compose Navigation
 - ✅ **Reactive Programming** with Kotlin Flows
 - ✅ **Local Database** with Room persistence
+- ✅ **Test-Ready Architecture:** Designed for testability with Unit and Integration tests.
 
 ### 📂 Module Structure
 
