@@ -14,16 +14,15 @@ class GetShoppingListByIdUseCase @Inject constructor(
 ) {
     /**
      * Retrieves a shopping list by its ID.
-     * @param listId The ID of the shopping list to retrieve
+     * @param id The ID of the shopping list to retrieve
      * @return Flow of ShoppingListModel or null if not found
-     * @throws IllegalArgumentException if the listId is invalid
+     * @throws IllegalArgumentException if the id is invalid
      */
-    operator fun invoke(listId: Int): Flow<ShoppingListModel?> {
-        // Business logic: Validate input
-        if (listId <= 0) {
+    operator fun invoke(id: Int): Flow<ShoppingListModel?> {
+        // An ID must be greater than 0.
+        if (id <= 0) {
             throw IllegalArgumentException("Shopping list ID must be greater than 0")
         }
-        
-        return shoppingListRepository.getShoppingList(listId)
+        return shoppingListRepository.getShoppingList(id)
     }
 } 

@@ -23,4 +23,10 @@ android {
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.hilt.android)
+    
+    // Testing dependencies
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 } 

@@ -1,0 +1,2 @@
+package com.fcojaviergarciarodriguez.shoppinglistapp.domain.usecase
+
