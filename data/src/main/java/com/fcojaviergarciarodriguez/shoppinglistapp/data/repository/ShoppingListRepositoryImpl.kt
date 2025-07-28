@@ -10,9 +10,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ShoppingListRepositoryImpl(
+class ShoppingListRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource
 ) : ShoppingListRepository {
 

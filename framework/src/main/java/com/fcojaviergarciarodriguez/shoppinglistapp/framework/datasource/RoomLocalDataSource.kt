@@ -10,8 +10,9 @@ import com.fcojaviergarciarodriguez.shoppinglistapp.framework.mapper.toShoppingL
 import com.fcojaviergarciarodriguez.shoppinglistapp.framework.mapper.toShoppingListModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class RoomLocalDataSource(private val shoppingListDao: ShoppingListDao) : LocalDataSource {
+class RoomLocalDataSource @Inject constructor(private val shoppingListDao: ShoppingListDao) : LocalDataSource {
     override fun getShoppingLists(): Flow<List<ShoppingListModel>> {
         return shoppingListDao.getShoppingLists().map { list ->
             list.map { it.toShoppingListModel(emptyList()) }
