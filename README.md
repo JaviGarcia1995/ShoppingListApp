@@ -30,23 +30,23 @@ This project serves as a **production-ready template** demonstrating:
 ## ✨ Features
 
 ### 📱 App Functionality
-- ✅ Create and manage multiple shopping lists
-- ✅ Add, edit, and delete items within lists
-- ✅ Mark items as completed with visual feedback
-- ✅ Swipe-to-delete functionality for lists and items
-- ✅ Confirmation dialogs for destructive actions
-- ✅ Responsive UI with Material Design 3
-- ✅ Multilingual support (English/Spanish)
+- Create and manage multiple shopping lists
+- Add, edit, and delete items within lists
+- Mark items as completed with visual feedback
+- Swipe-to-delete functionality for lists and items
+- Confirmation dialogs for destructive actions
+- Responsive UI with Material Design 3
+- Multilingual support (English/Spanish)
 
 ### 🏗️ Architecture Features
-- ✅ **Clean Architecture** with 4 distinct modules
-- ✅ **Use Cases** for business logic encapsulation
-- ✅ **Repository Pattern** for data abstraction
-- ✅ **Dependency Injection** with Hilt
-- ✅ **Type-safe Navigation** with Compose Navigation
-- ✅ **Reactive Programming** with Kotlin Flows
-- ✅ **Local Database** with Room persistence
-- ✅ **Test-Ready Architecture:** Designed for testability with Unit and Integration tests.
+- **Clean Architecture** with 4 distinct modules
+- **Use Cases** for business logic encapsulation
+- **Repository Pattern** for data abstraction
+- **Dependency Injection** with Hilt
+- **Type-safe Navigation** with Compose Navigation
+- **Reactive Programming** with Kotlin Flows
+- **Local Database** with Room persistence
+- **Test-Ready Architecture:** Designed for testability with Unit and Integration tests.
 
 ### 📂 Module Structure
 
