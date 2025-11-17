@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,19 +34,17 @@ import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.TertiaryColor
 @Composable
 fun CustomAddListBottomSheet(
     sheetState: SheetState,
-    showSheetState: MutableState<Boolean>,
+    showBottomSheet: Boolean,
     formTitle: String,
     textFieldLabel: String,
     newElementName: String,
     onNewElementNameChange: (String) -> Unit,
+    onDismiss: () -> Unit,
     addElement: (name: String) -> Unit
 ) {
-    if (showSheetState.value) {
+    if (showBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = {
-                showSheetState.value = false
-                onNewElementNameChange("")
-            },
+            onDismissRequest = onDismiss,
             sheetState = sheetState
         ) {
             Column(
@@ -95,10 +92,7 @@ fun CustomAddListBottomSheet(
 
                 ) {
                     Button(
-                        onClick = {
-                            onNewElementNameChange("")
-                            showSheetState.value = false
-                        },
+                        onClick = onDismiss,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = TertiaryColor
                         )
@@ -108,11 +102,7 @@ fun CustomAddListBottomSheet(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-                            if (newElementName.isNotBlank()) {
-                                addElement(newElementName)
-                                showSheetState.value = false
-                                onNewElementNameChange("")
-                            }
+                            addElement(newElementName)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = PrimaryColor

@@ -1,5 +1,6 @@
 package com.fcojaviergarciarodriguez.shoppinglistapp.domain.usecase
 
+import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.Result
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ShoppingListModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.repository.ShoppingListRepository
 import javax.inject.Inject
@@ -15,15 +16,18 @@ class DeleteShoppingListUseCase @Inject constructor(
     /**
      * Deletes the specified shopping list and all its associated items.
      * @param shoppingList The shopping list to delete
-     * @throws IllegalArgumentException if the shopping list ID is invalid
+     * @return Result.Success if successful, Result.Error.ValidationError if ID is invalid
      */
-    suspend operator fun invoke(shoppingList: ShoppingListModel) {
-        // Business logic: Validate input
-        if (shoppingList.id <= 0) {
-            throw IllegalArgumentException("Invalid shopping list ID")
+    suspend operator fun invoke(shoppingList: ShoppingListModel): Result<Unit> {
+        return try {
+            if (shoppingList.id <= 0) {
+                Result.Error.ValidationError("Invalid shopping list ID")
+            } else {
+                shoppingListRepository.deleteShoppingList(shoppingList)
+                Result.Success(Unit)
+            }
+        } catch (e: Exception) {
+            Result.Error.UnknownError(e.message ?: "Unknown error occurred")
         }
-        
-        // Delegate to repository
-        shoppingListRepository.deleteShoppingList(shoppingList)
     }
 } 

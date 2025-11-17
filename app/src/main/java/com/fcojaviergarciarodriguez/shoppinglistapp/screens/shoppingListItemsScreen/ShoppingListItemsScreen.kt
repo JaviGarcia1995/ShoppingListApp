@@ -31,8 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,31 +44,61 @@ import androidx.compose.ui.unit.sp
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ItemModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.R
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomAddElementFloatingButton
+import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.ShoppingListAppTheme
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomAddListBottomSheet
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomTopBar
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.PrimaryColor
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListItemsScreen(
     viewModel: ShoppingListItemsViewModel,
     onBackClicked: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val shoppingList = uiState.shoppingList
-
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val showBottomSheet = remember { mutableStateOf(false) }
-    val newItemName = remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Mostrar errores con Snackbar
+    val onShowAddItemBottomSheet = remember { { viewModel.showAddItemBottomSheet() } }
+    val onHideAddItemBottomSheet = remember { { viewModel.hideAddItemBottomSheet() } }
+    val onUpdateNewItemName = remember { { name: String -> viewModel.updateNewItemName(name) } }
+    val onAddItem = remember { { name: String -> viewModel.addItem(name) } }
+    val onToggleItemCompleted = remember { { item: ItemModel -> viewModel.toggleItemCompleted(item) } }
+    val onDeleteItem = remember { { item: ItemModel -> viewModel.deleteItem(item) } }
+
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(message)
             viewModel.clearError()
         }
     }
+
+    ShoppingListItemsContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onShowAddItemBottomSheet = onShowAddItemBottomSheet,
+        onHideAddItemBottomSheet = onHideAddItemBottomSheet,
+        onUpdateNewItemName = onUpdateNewItemName,
+        onAddItem = onAddItem,
+        onToggleItemCompleted = onToggleItemCompleted,
+        onDeleteItem = onDeleteItem,
+        onBackClicked = onBackClicked
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShoppingListItemsContent(
+    uiState: ShoppingListItemsUiState,
+    snackbarHostState: SnackbarHostState,
+    onShowAddItemBottomSheet: () -> Unit,
+    onHideAddItemBottomSheet: () -> Unit,
+    onUpdateNewItemName: (String) -> Unit,
+    onAddItem: (String) -> Unit,
+    onToggleItemCompleted: (ItemModel) -> Unit,
+    onDeleteItem: (ItemModel) -> Unit,
+    onBackClicked: () -> Unit
+) {
+    val shoppingList = uiState.shoppingList
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Scaffold(
         topBar = {
@@ -86,7 +116,7 @@ fun ShoppingListItemsScreen(
         },
         floatingActionButton = {
             CustomAddElementFloatingButton(
-                showSheetState = showBottomSheet,
+                onClick = onShowAddItemBottomSheet,
                 text = stringResource(R.string.new_item)
             )
         },
@@ -121,10 +151,10 @@ fun ShoppingListItemsScreen(
                             SwipeToDeleteItemRow(
                                 item = item,
                                 onCheckedChange = {
-                                    viewModel.toggleItemCompleted(item)
+                                    onToggleItemCompleted(item)
                                 },
                                 onDelete = {
-                                    viewModel.deleteItem(item)
+                                    onDeleteItem(item)
                                 }
                             )
                         }
@@ -136,15 +166,13 @@ fun ShoppingListItemsScreen(
 
     CustomAddListBottomSheet(
         sheetState = sheetState,
-        showSheetState = showBottomSheet,
+        showBottomSheet = uiState.showAddItemBottomSheet,
         formTitle = stringResource(R.string.new_item),
         textFieldLabel = stringResource(R.string.item_name),
-        newElementName = newItemName.value,
-        onNewElementNameChange = { newItemName.value = it },
-        addElement = {
-            viewModel.addItem(it)
-            newItemName.value = ""
-        }
+        newElementName = uiState.newItemName,
+        onNewElementNameChange = onUpdateNewItemName,
+        onDismiss = onHideAddItemBottomSheet,
+        addElement = onAddItem
     )
 }
 
@@ -232,5 +260,37 @@ fun ItemRow(
                 textDecoration = if (item.isChecked) TextDecoration.LineThrough else TextDecoration.None,
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ItemRowPreview() {
+    ShoppingListAppTheme {
+        ItemRow(
+            item = ItemModel(
+                id = 1,
+                listId = 1,
+                name = "Leche",
+                isChecked = false
+            ),
+            onCheckedChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ItemRowCheckedPreview() {
+    ShoppingListAppTheme {
+        ItemRow(
+            item = ItemModel(
+                id = 2,
+                listId = 1,
+                name = "Pan",
+                isChecked = true
+            ),
+            onCheckedChange = {}
+        )
     }
 }

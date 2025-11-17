@@ -32,9 +32,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,8 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ItemModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ShoppingListModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.R
+import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.ShoppingListAppTheme
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomAddElementFloatingButton
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomAddListBottomSheet
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomAlertDialog
@@ -52,23 +53,22 @@ import com.fcojaviergarciarodriguez.shoppinglistapp.ui.common.CustomTopBar
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.PrimaryColor
 import com.fcojaviergarciarodriguez.shoppinglistapp.ui.theme.SecondaryColor
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListsHomeScreen(
     viewModel: ShoppingListsHomeViewModel,
     onShoppingListClicked: (Int) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val showBottomSheet = remember { mutableStateOf(false) }
-    val newListName = remember { mutableStateOf("") }
     val snackBarHostState = remember { SnackbarHostState() }
-    
-    // Estado para el diálogo de confirmación
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var listToDelete by remember { mutableStateOf<ShoppingListModel?>(null) }
 
-    // Mostrar errores con SnackBar
+    val onShowAddListBottomSheet = remember { { viewModel.showAddListBottomSheet() } }
+    val onHideAddListBottomSheet = remember { { viewModel.hideAddListBottomSheet() } }
+    val onUpdateNewListName = remember { { name: String -> viewModel.updateNewListName(name) } }
+    val onAddShoppingList = remember { { name: String -> viewModel.addShoppingList(name) } }
+    val onShowDeleteConfirmation = remember { { list: ShoppingListModel -> viewModel.showDeleteConfirmation(list) } }
+    val onHideDeleteConfirmation = remember { { viewModel.hideDeleteConfirmation() } }
+    val onDeleteShoppingList = remember { { list: ShoppingListModel -> viewModel.deleteShoppingList(list) } }
+
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { message ->
             snackBarHostState.showSnackbar(message)
@@ -76,13 +76,43 @@ fun ShoppingListsHomeScreen(
         }
     }
 
+    ShoppingListsHomeContent(
+        uiState = uiState,
+        snackBarHostState = snackBarHostState,
+        onShowAddListBottomSheet = onShowAddListBottomSheet,
+        onHideAddListBottomSheet = onHideAddListBottomSheet,
+        onUpdateNewListName = onUpdateNewListName,
+        onAddShoppingList = onAddShoppingList,
+        onShowDeleteConfirmation = onShowDeleteConfirmation,
+        onHideDeleteConfirmation = onHideDeleteConfirmation,
+        onDeleteShoppingList = onDeleteShoppingList,
+        onShoppingListClicked = onShoppingListClicked
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShoppingListsHomeContent(
+    uiState: ShoppingListsHomeUiState,
+    snackBarHostState: SnackbarHostState,
+    onShowAddListBottomSheet: () -> Unit,
+    onHideAddListBottomSheet: () -> Unit,
+    onUpdateNewListName: (String) -> Unit,
+    onAddShoppingList: (String) -> Unit,
+    onShowDeleteConfirmation: (ShoppingListModel) -> Unit,
+    onHideDeleteConfirmation: () -> Unit,
+    onDeleteShoppingList: (ShoppingListModel) -> Unit,
+    onShoppingListClicked: (Int) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     Scaffold(
         topBar = {
             CustomTopBar(text = stringResource(R.string.shopping_lists_title))
         },
         floatingActionButton = {
             CustomAddElementFloatingButton(
-                showSheetState = showBottomSheet,
+                onClick = onShowAddListBottomSheet,
                 text = stringResource(R.string.new_list)
             )
         },
@@ -125,10 +155,7 @@ fun ShoppingListsHomeScreen(
                             SwipeToDeleteListCard(
                                 shoppingList = shoppingList,
                                 onItemClick = { onShoppingListClicked(it.id) },
-                                onDeleteRequest = {
-                                    listToDelete = it
-                                    showDeleteDialog = true
-                                }
+                                onDeleteRequest = { onShowDeleteConfirmation(it) }
                             )
                         }
                     }
@@ -138,33 +165,27 @@ fun ShoppingListsHomeScreen(
 
         CustomAddListBottomSheet(
             sheetState = sheetState,
-            showSheetState = showBottomSheet,
+            showBottomSheet = uiState.showAddListBottomSheet,
             formTitle = stringResource(R.string.new_shopping_list),
             textFieldLabel = stringResource(R.string.list_name),
-            newElementName = newListName.value,
-            onNewElementNameChange = { newListName.value = it },
-            addElement = {
-                viewModel.addShoppingList(it)
-                newListName.value = ""
-            }
+            newElementName = uiState.newListName,
+            onNewElementNameChange = onUpdateNewListName,
+            onDismiss = onHideAddListBottomSheet,
+            addElement = onAddShoppingList
         )
         
-        // Diálogo de confirmación
-        listToDelete?.let { list ->
-            if (showDeleteDialog) {
+        uiState.listToDelete?.let { list ->
+            if (uiState.showDeleteDialog) {
                 CustomAlertDialog(
                     title = stringResource(R.string.delete_shopping_list_title),
                     message = stringResource(R.string.delete_shopping_list_message, list.name),
                     confirmText = stringResource(R.string.delete),
                     cancelText = stringResource(R.string.cancel),
                     onConfirm = {
-                        viewModel.deleteShoppingList(list)
-                        showDeleteDialog = false
-                        listToDelete = null
+                        onDeleteShoppingList(list)
                     },
                     onDismiss = {
-                        showDeleteDialog = false
-                        listToDelete = null
+                        onHideDeleteConfirmation()
                     }
                 )
             }
@@ -277,5 +298,58 @@ fun ShoppingListCard(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ShoppingListCardPreview() {
+    ShoppingListAppTheme {
+        ShoppingListCard(
+            shoppingList = ShoppingListModel(
+                id = 1,
+                name = "Mi Lista de Compras",
+                items = listOf(
+                    ItemModel(
+                        id = 1,
+                        listId = 1,
+                        name = "Leche",
+                        isChecked = false
+                    ),
+                    ItemModel(
+                        id = 2,
+                        listId = 1,
+                        name = "Pan",
+                        isChecked = true
+                    )
+                )
+            ),
+            onItemClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ShoppingListsHomeContentPreview() {
+    ShoppingListAppTheme {
+        ShoppingListsHomeContent(
+            uiState = ShoppingListsHomeUiState(
+                shoppingLists = listOf(
+                    ShoppingListModel(1, "Lista 1", emptyList()),
+                    ShoppingListModel(2, "Lista 2", emptyList())
+                ),
+                isLoading = false
+            ),
+            snackBarHostState = remember { SnackbarHostState() },
+            onShowAddListBottomSheet = {},
+            onHideAddListBottomSheet = {},
+            onUpdateNewListName = {},
+            onAddShoppingList = {},
+            onShowDeleteConfirmation = {},
+            onHideDeleteConfirmation = {},
+            onDeleteShoppingList = {},
+            onShoppingListClicked = {}
+        )
     }
 }

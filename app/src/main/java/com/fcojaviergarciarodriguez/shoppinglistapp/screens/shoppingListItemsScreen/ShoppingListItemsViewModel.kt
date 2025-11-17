@@ -1,8 +1,9 @@
 package com.fcojaviergarciarodriguez.shoppinglistapp.screens.shoppingListItemsScreen
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fcojaviergarciarodriguez.shoppinglistapp.base.BaseViewModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ItemModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.ShoppingListModel
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.usecase.AddItemToListUseCase
@@ -23,12 +24,12 @@ class ShoppingListItemsViewModel @Inject constructor(
     private val toggleItemCompletedUseCase: ToggleItemCompletedUseCase,
     private val deleteItemUseCase: DeleteItemUseCase,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : BaseViewModel<ShoppingListItemsUiState>() {
 
     private val shoppingListId: Int = savedStateHandle.get<Int>("shoppingListId") ?: 0
 
-    private val _uiState = MutableStateFlow(ShoppingListItemsUiState())
-    val uiState: StateFlow<ShoppingListItemsUiState> = _uiState.asStateFlow()
+    override val _uiState = MutableStateFlow(ShoppingListItemsUiState())
+    override val uiState: StateFlow<ShoppingListItemsUiState> = _uiState.asStateFlow()
 
     init {
         loadShoppingListWithItems()
@@ -46,55 +47,78 @@ class ShoppingListItemsViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = e.message
+                    errorMessage = e.message ?: "Unknown error occurred"
                 )
             }
         }
     }
 
     fun addItem(name: String) {
-        viewModelScope.launch {
-            try {
-                addItemToListUseCase(shoppingListId, name)
-            } catch (e: Exception) {
+        executeUseCase(
+            useCase = { addItemToListUseCase(shoppingListId, name) },
+            onSuccess = {
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message
+                    showAddItemBottomSheet = false,
+                    newItemName = ""
+                )
+            },
+            onError = { message ->
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = message
                 )
             }
-        }
+        )
     }
 
     fun toggleItemCompleted(item: ItemModel) {
-        viewModelScope.launch {
-            try {
-                toggleItemCompletedUseCase(item)
-            } catch (e: Exception) {
+        executeUseCase(
+            useCase = { toggleItemCompletedUseCase(item) },
+            onSuccess = { },
+            onError = { message ->
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message
+                    errorMessage = message
                 )
             }
-        }
+        )
     }
 
     fun deleteItem(item: ItemModel) {
-        viewModelScope.launch {
-            try {
-                deleteItemUseCase(item)
-            } catch (e: Exception) {
+        executeUseCase(
+            useCase = { deleteItemUseCase(item) },
+            onSuccess = { },
+            onError = { message ->
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message
+                    errorMessage = message
                 )
             }
-        }
+        )
     }
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
+
+    fun showAddItemBottomSheet() {
+        _uiState.value = _uiState.value.copy(showAddItemBottomSheet = true)
+    }
+
+    fun hideAddItemBottomSheet() {
+        _uiState.value = _uiState.value.copy(
+            showAddItemBottomSheet = false,
+            newItemName = ""
+        )
+    }
+
+    fun updateNewItemName(name: String) {
+        _uiState.value = _uiState.value.copy(newItemName = name)
+    }
 }
 
+@Immutable
 data class ShoppingListItemsUiState(
     val shoppingList: ShoppingListModel? = null,
     val isLoading: Boolean = true,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val showAddItemBottomSheet: Boolean = false,
+    val newItemName: String = ""
 )

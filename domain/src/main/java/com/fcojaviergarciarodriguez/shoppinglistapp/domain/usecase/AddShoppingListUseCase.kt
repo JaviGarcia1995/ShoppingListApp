@@ -1,5 +1,6 @@
 package com.fcojaviergarciarodriguez.shoppinglistapp.domain.usecase
 
+import com.fcojaviergarciarodriguez.shoppinglistapp.domain.model.Result
 import com.fcojaviergarciarodriguez.shoppinglistapp.domain.repository.ShoppingListRepository
 import javax.inject.Inject
 
@@ -13,15 +14,18 @@ class AddShoppingListUseCase @Inject constructor(
     /**
      * Adds a new shopping list with the given name.
      * @param name The name of the shopping list to create
-     * @throws IllegalArgumentException if the name is blank
+     * @return Result.Success if successful, Result.Error.ValidationError if name is blank
      */
-    suspend operator fun invoke(name: String) {
-        // Business logic: Validate input
-        if (name.isBlank()) {
-            throw IllegalArgumentException("Shopping list name cannot be empty")
+    suspend operator fun invoke(name: String): Result<Unit> {
+        return try {
+            if (name.isBlank()) {
+                Result.Error.ValidationError("Shopping list name cannot be empty")
+            } else {
+                shoppingListRepository.addShoppingList(name.trim())
+                Result.Success(Unit)
+            }
+        } catch (e: Exception) {
+            Result.Error.UnknownError(e.message ?: "Unknown error occurred")
         }
-        
-        // Delegate to repository
-        shoppingListRepository.addShoppingList(name.trim())
     }
 } 

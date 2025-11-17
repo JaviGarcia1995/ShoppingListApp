@@ -12,7 +12,6 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,11 +23,11 @@ import com.fcojaviergarciarodriguez.shoppinglistapp.R
 
 @Composable
 fun CustomAddElementFloatingButton(
-    showSheetState: MutableState<Boolean>,
+    onClick: () -> Unit,
     text: String
 ) {
     FloatingActionButton(
-        onClick = { showSheetState.value = !showSheetState.value },
+        onClick = onClick,
         modifier = Modifier.padding(8.dp),
         containerColor = PrimaryColor,
         elevation = FloatingActionButtonDefaults.elevation(0.dp)
