@@ -48,12 +48,37 @@ This project serves as a **production-ready template** demonstrating:
 - **Local Database** with Room persistence
 - **Test-Ready Architecture:** Designed for testability with Unit and Integration tests.
 
+## 🧠 Design Decisions
+
+This template intentionally keeps a lightweight implementation of Clean Architecture to reduce boilerplate while preserving separation of concerns.
+- The domain layer contains only pure business logic and is completely independent from Android framework classes.
+- The data layer abstracts data sources to allow future extension (e.g., remote API integration).
+- The framework module isolates Android-specific implementations (Room, Hilt).
+- The app module focuses solely on UI and state management.
+
+Trade-offs:
+
+- No remote data source included to keep the template minimal.
+- No over-engineering with unnecessary abstractions.
+
 ### 📂 Module Structure
 
 - **`app/`** - Presentation layer with Compose UI, ViewModels, and Navigation
 - **`domain/`** - Business logic with Use Cases, Models, and Repository interfaces
 - **`data/`** - Data layer with Repository implementations and Data Sources
 - **`framework/`** - Infrastructure layer with Room database, DAOs, and Entities
+
+## 🚀 When to Use This Template
+
+- When starting a new Android project with scalable architecture.
+- When you need a clean base with modular separation.
+- When learning Clean Architecture in a practical way.
+
+## 🔮 Possible Extensions
+- Remote data source integration.
+- CI/CD configuration.
+- UI testing with Compose Test.
+- Multi-module feature separation.
 
 ## 📜 Docs
 - [Android Architecture Guidelines](https://developer.android.com/topic/architecture)
